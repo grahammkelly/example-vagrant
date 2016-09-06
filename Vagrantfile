@@ -53,7 +53,7 @@ Vagrant.configure(VAGRANT_API_VER) do |config|
   #
   #   # Customize the amount of memory on the VM:
   #   vb.memory = "1024"
-    vb.name = VM_NAME
+    vb.name = "#{VM_NAME}"
   end
 
   # View the documentation for the provider you are using for more
@@ -76,6 +76,10 @@ Vagrant.configure(VAGRANT_API_VER) do |config|
   config.vm.provision "shell" do |s|
     ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
     s.inline = <<-SHELL
+        echo "Ensuring the English locale is available"
+        sudo locale-gen en_IE.UTF-8
+
+        # Create the SSH keys to allow direct SSH onto the box (not through vagrant)
         echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
         echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
     SHELL
